@@ -1,14 +1,37 @@
+import 'dart:ffi';
+import 'dart:io';
 
-import 'dart:async';
+import 'package:ffi/ffi.dart';
 
-import 'package:flutter/services.dart';
+typedef DSVersion = Pointer<Utf8> Function();
+typedef DSNativeFreeStr = Void Function(Pointer<Utf8>);
+typedef DSFreeStr = void Function(Pointer<Utf8>);
 
 class DeepspeechFlutter {
-  static const MethodChannel _channel =
-      const MethodChannel('deepspeech_flutter');
+  factory DeepspeechFlutter() => _instance;
+  static final DeepspeechFlutter _instance = DeepspeechFlutter._internal();
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  DeepspeechFlutter._internal() {
+    _deepspeech = Platform.isAndroid
+        ? DynamicLibrary.open("libdeepspeechlibc.so")
+        : DynamicLibrary.process();
+
+    _dsVersion =
+        _deepspeech.lookupFunction<DSVersion, DSVersion>('deepspeech_verison');
+    _dsFreeStr = _deepspeech
+        .lookupFunction<DSNativeFreeStr, DSFreeStr>('deepspeech_free_str');
+  }
+
+  DynamicLibrary _deepspeech;
+
+  // Reference to functions.
+  DSVersion _dsVersion;
+  DSFreeStr _dsFreeStr;
+
+  String getVersion() {
+    Pointer<Utf8> _version = _dsVersion();
+    String value = Utf8.fromUtf8(_version);
+    _dsFreeStr(_version);
+    return value;
   }
 }
