@@ -9,6 +9,8 @@ public class SwiftDeepspeechFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    if (call.method == "temp") {
+      let res = deepspeech_verison()
+    }
   }
 }
