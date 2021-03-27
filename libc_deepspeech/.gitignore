@@ -1,0 +1,14 @@
+CMakeFiles/
+*.cmake
+CMakeCache.txt
+Makefile
+CmakeScripts/
+Project.build
+Project.xcodeproj
+XCBuildData/
+.ninja*
+*.ninja
+.DS_Store
+build_files/
+
+!ios.toolchain.cmake

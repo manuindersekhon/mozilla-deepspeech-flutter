@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "libc_deepspeech.h": "c",
+        "deepspeech.h": "c"
+    }
+}
