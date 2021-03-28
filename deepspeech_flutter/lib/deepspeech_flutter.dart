@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 
@@ -11,6 +12,9 @@ typedef NativeFreeModel = Void Function(Pointer);
 typedef FreeModel = void Function(Pointer);
 typedef NativeModelSampleRate = Uint64 Function(Pointer);
 typedef ModelSampleRate = int Function(Pointer);
+typedef NativeSpeechToText = Pointer<Utf8> Function(
+    Pointer, Pointer<Uint8>, Uint64);
+typedef SpeechToText = Pointer<Utf8> Function(Pointer, Pointer<Uint8>, int);
 
 class DeepspeechFlutter {
   factory DeepspeechFlutter() => _instance;
@@ -32,6 +36,8 @@ class DeepspeechFlutter {
     _dsModelSampleRate =
         _deepspeech.lookupFunction<NativeModelSampleRate, ModelSampleRate>(
             'model_sample_rate');
+    _dsSpeechToText = _deepspeech
+        .lookupFunction<NativeSpeechToText, SpeechToText>('speech_to_text');
   }
 
   DynamicLibrary _deepspeech;
@@ -42,6 +48,7 @@ class DeepspeechFlutter {
   CreateModel _dsCreateModel;
   FreeModel _dsFreeModel;
   ModelSampleRate _dsModelSampleRate;
+  SpeechToText _dsSpeechToText;
 
   // Pointer to loaded model state
   Pointer _modelCtxPointer;
@@ -66,5 +73,17 @@ class DeepspeechFlutter {
 
     int _sampleRate = _dsModelSampleRate(_modelCtxPointer);
     return _sampleRate;
+  }
+
+  String speechToText(Uint8List samples) {
+    Pointer<Uint8> samplePointer = allocate<Uint8>(count: samples.length);
+    for (int i = 0; i < samples.length; i++) {
+      samplePointer.elementAt(i).value = samples[i];
+    }
+    Pointer<Utf8> _result =
+        _dsSpeechToText(_modelCtxPointer, samplePointer, samples.length);
+    free(samplePointer);
+
+    return Utf8.fromUtf8(_result);
   }
 }

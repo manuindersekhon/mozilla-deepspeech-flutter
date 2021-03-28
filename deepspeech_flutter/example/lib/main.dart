@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,10 @@ class _MyAppState extends State<MyApp> {
           children: [
             Text('DeepSpeech Version: ${_deepspeech.getVersion()}'),
             Text('Model Sample Rate: $_sampleRate'),
+            TextButton(
+              child: Text('Load WAV File'),
+              onPressed: _getData,
+            ),
           ],
         ),
       ),
@@ -56,5 +61,11 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _sampleRate = _deepspeech.getSampleRate();
     });
+  }
+
+  void _getData() async {
+    final bytes = await rootBundle.load('assets/new-home-in-the-stars-16k.wav');
+    final _list = bytes.buffer.asUint8List();
+    print(_deepspeech.speechToText(_list));
   }
 }
