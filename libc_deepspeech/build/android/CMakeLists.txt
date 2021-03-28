@@ -1,3 +1,9 @@
+# cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -G Ninja -DANDROID_NDK=$ANDROID_NDK -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-29 -Sandroid -Bbin/android/arm64-v8a
+# cmake --build bin/android/arm64-v8a
+
+# cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -G Ninja -DANDROID_NDK=$ANDROID_NDK -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-29 -Sandroid -Bbin/android/armeabi-v7a
+# cmake --build bin/android/armeabi-v7a
+
 cmake_minimum_required(VERSION 3.4.1)
 
 # Library source files.

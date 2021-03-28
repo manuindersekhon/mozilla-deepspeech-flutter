@@ -1,3 +1,6 @@
+# cmake -Sios -Bbin/ios -G Xcode -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS64
+# cmake --build bin/ios --config Release
+
 cmake_minimum_required(VERSION 3.4.1)
 
 # Library source files.
