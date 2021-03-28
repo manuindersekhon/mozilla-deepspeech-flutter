@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 # Library source files.
-FILE(GLOB SRC ../../*.c)
+FILE(GLOB SRC ../../*.cpp)
 
 # Add our own library, we will call it libcdeepspeech
 add_library(deepspeechlibc SHARED ${SRC})

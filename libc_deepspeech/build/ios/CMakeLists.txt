@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 # Library source files.
-FILE(GLOB SRC ../../*.c)
+FILE(GLOB SRC ../../*.cpp)
 
 add_library(deepspeechlibc STATIC ${SRC})
 include_directories(../../)

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string>
 
 // Deepspeech 0.9.3 library header file.
 #include "../libdeepspeech_0.9.3/deepspeech.h"
@@ -56,5 +57,18 @@ uint64_t model_sample_rate(void *model_state)
 
 char *speech_to_text(void *model_state, char *buffer, uint64_t buffer_size)
 {
-    return NULL;
+    Metadata *result = DS_SpeechToTextWithMetadata((ModelState *)model_state, (short *)buffer, buffer_size / 2, 3);
+
+    const CandidateTranscript *transcript = &result->transcripts[0];
+    std::string retval = "";
+    for (int i = 0; i < transcript->num_tokens; i++)
+    {
+        const TokenMetadata &token = transcript->tokens[i];
+        retval += token.text;
+    }
+    char *encoded = strdup(retval.c_str());
+
+    DS_FreeMetadata(result);
+
+    return encoded;
 }
