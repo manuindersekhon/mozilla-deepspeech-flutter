@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _deepspeech = DeepspeechFlutter();
   int _sampleRate = 0;
+  String _processedText;
 
   @override
   void initState() {
@@ -32,15 +33,23 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Mozilla DeepSpeech Example'),
         ),
-        body: Column(
-          children: [
-            Text('DeepSpeech Version: ${_deepspeech.getVersion()}'),
-            Text('Model Sample Rate: $_sampleRate'),
-            TextButton(
-              child: Text('Load WAV File'),
-              onPressed: _getData,
-            ),
-          ],
+        body: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+              Text('DeepSpeech Version: ${_deepspeech.getVersion()}'),
+              SizedBox(height: 20),
+              Text('Model Sample Rate: $_sampleRate'),
+              SizedBox(height: 20),
+              OutlineButton(
+                child: Text('Load WAV File'),
+                onPressed: _runSpeechToText,
+              ),
+              SizedBox(height: 20),
+              if (_processedText != null) Text(_processedText),
+            ],
+          ),
         ),
       ),
     );
@@ -63,9 +72,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _getData() async {
+  void _runSpeechToText() async {
     final bytes = await rootBundle.load('assets/new-home-in-the-stars-16k.wav');
     final _list = bytes.buffer.asUint8List();
-    print(_deepspeech.speechToText(_list));
+
+    final _result = _deepspeech.speechToText(_list);
+
+    setState(() {
+      _processedText = _result;
+    });
   }
 }
