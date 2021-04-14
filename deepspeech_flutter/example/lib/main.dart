@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:deepspeech_flutter/deepspeech_flutter.dart';
@@ -19,6 +20,8 @@ class _MyAppState extends State<MyApp> {
   final _deepspeech = DeepspeechFlutter();
   int _sampleRate = 0;
   String _processedText;
+  Uint8List _wavFile;
+  bool _wavFileLoaded = false;
 
   @override
   void initState() {
@@ -44,18 +47,31 @@ class _MyAppState extends State<MyApp> {
               Text('Model Sample Rate: $_sampleRate',
                   style: TextStyle(fontSize: 20)),
               SizedBox(height: 40),
-              OutlineButton(
+              OutlinedButton(
                 child: Text('Load WAV File'),
-                onPressed: _runSpeechToText,
+                onPressed: _loadWavFile,
               ),
               SizedBox(height: 40),
+              if (_wavFileLoaded) ...[
+                Text('Loaded: new-home-in-the-stars-16k.wav'),
+                SizedBox(height: 10),
+                OutlinedButton(
+                  child: Text('Run Speech To Text'),
+                  onPressed: _runSpeechToText,
+                ),
+              ],
+              SizedBox(height: 40),
               if (_processedText != null) ...[
-                Text('Converted Speech to Text:',
-                    style: TextStyle(fontSize: 20)),
-                SizedBox(height: 30),
+                Text(
+                  'Converted Speech to Text:',
+                  style: TextStyle(fontSize: 20),
+                ),
+                // SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Text(_processedText, style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
+                  child: Text(_processedText,
+                      style:
+                          TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
                 ),
               ],
             ],
@@ -82,11 +98,17 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _runSpeechToText() async {
+  Future<void> _loadWavFile() async {
     final bytes = await rootBundle.load('assets/new-home-in-the-stars-16k.wav');
-    final _list = bytes.buffer.asUint8List();
+    _wavFile = bytes.buffer.asUint8List();
 
-    final _result = _deepspeech.speechToText(_list);
+    setState(() {
+      _wavFileLoaded = true;
+    });
+  }
+
+  void _runSpeechToText() async {
+    final _result = _deepspeech.speechToText(_wavFile);
 
     setState(() {
       _processedText = _result;
