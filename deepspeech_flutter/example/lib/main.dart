@@ -19,8 +19,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _deepspeech = DeepspeechFlutter();
   int _sampleRate = 0;
-  String _processedText;
-  Uint8List _wavFile;
+  String? _processedText;
+  Uint8List? _wavFile;
   bool _wavFileLoaded = false;
 
   @override
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
                 // SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Text(_processedText,
+                  child: Text(_processedText!,
                       style:
                           TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
                 ),
@@ -108,10 +108,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _runSpeechToText() async {
-    final _result = _deepspeech.speechToText(_wavFile);
+    if (_wavFile != null) {
+      final _result = _deepspeech.speechToText(_wavFile!);
 
-    setState(() {
-      _processedText = _result;
-    });
+      setState(() {
+        _processedText = _result;
+      });
+    }
   }
 }

@@ -40,50 +40,51 @@ class DeepspeechFlutter {
         .lookupFunction<NativeSpeechToText, SpeechToText>('speech_to_text');
   }
 
-  DynamicLibrary _deepspeech;
+  late final DynamicLibrary _deepspeech;
 
   // Reference to functions.
-  DSVersion _dsVersion;
-  DSFreeStr _dsFreeStr;
-  CreateModel _dsCreateModel;
-  FreeModel _dsFreeModel;
-  ModelSampleRate _dsModelSampleRate;
-  SpeechToText _dsSpeechToText;
+  late final DSVersion _dsVersion;
+  late final DSFreeStr _dsFreeStr;
+  late final CreateModel _dsCreateModel;
+  late final FreeModel _dsFreeModel;
+  late final ModelSampleRate _dsModelSampleRate;
+  late final SpeechToText _dsSpeechToText;
 
   // Pointer to loaded model state
-  Pointer _modelCtxPointer;
+  Pointer? _modelCtxPointer;
 
   String getVersion() {
     Pointer<Utf8> _version = _dsVersion();
-    String value = Utf8.fromUtf8(_version);
+    String value = _version.toDartString();
     _dsFreeStr(_version);
     return value;
   }
 
   void createModel(String modelPath) {
-    Pointer<Utf8> _modelPath = Utf8.toUtf8(modelPath);
+    Pointer<Utf8> _modelPath = modelPath.toNativeUtf8();
     _modelCtxPointer = _dsCreateModel(_modelPath);
     print('_modelCtxPointer: $_modelCtxPointer');
   }
 
   int getSampleRate() {
-    if (_modelCtxPointer == null) {
+    if (_modelCtxPointer == null || _modelCtxPointer == nullptr) {
       return -1;
     }
 
-    int _sampleRate = _dsModelSampleRate(_modelCtxPointer);
+    int _sampleRate = _dsModelSampleRate(_modelCtxPointer!);
     return _sampleRate;
   }
 
   String speechToText(Uint8List samples) {
-    Pointer<Uint8> samplePointer = allocate<Uint8>(count: samples.length);
-    for (int i = 0; i < samples.length; i++) {
-      samplePointer.elementAt(i).value = samples[i];
+    Pointer<Uint8> samplePointer = calloc.call<Uint8>(samples.length);
+    for (int index = 0; index < samples.length; index++) {
+      samplePointer.elementAt(index).value = samples[index];
     }
-    Pointer<Utf8> _result =
-        _dsSpeechToText(_modelCtxPointer, samplePointer, samples.length);
-    free(samplePointer);
 
-    return Utf8.fromUtf8(_result);
+    Pointer<Utf8> _result =
+        _dsSpeechToText(_modelCtxPointer!, samplePointer, samples.length);
+    malloc.free(samplePointer);
+
+    return _result.toDartString();
   }
 }
