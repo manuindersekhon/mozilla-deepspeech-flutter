@@ -72,3 +72,24 @@ char *speech_to_text(void *model_state, char *buffer, uint64_t buffer_size)
 
     return encoded;
 }
+
+int enable_external_scorer(void *model_state, char *model_path)
+{
+    ModelState *ptr = (ModelState *)model_state;   
+    int status = DS_EnableExternalScorer(ptr, model_path);
+    return status;
+}
+
+int disable_external_scorer(void *model_state)
+{
+    ModelState *ptr = (ModelState *)model_state;
+    int status = DS_DisableExternalScorer(ptr);
+    return status;
+}
+
+int set_scorer_alpha_beta(void *model_state, float alpha, float beta)
+{
+    ModelState *ptr = (ModelState *)model_state;
+    int status = DS_SetScorerAlphaBeta(ptr, alpha, beta);
+    return status;
+}

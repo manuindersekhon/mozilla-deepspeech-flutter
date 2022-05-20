@@ -28,7 +28,19 @@ extern "C"
     // Returns json output from speech to text engine.
     EXPORTED char *speech_to_text(void *model_state, char *buffer, uint64_t buffer_size);
 
-// Closing bracket for extern "C"
+    // Enable decoding using external scorer. Returns zero on success, non-zero on failure.
+    EXPORTED int enable_external_scorer(void *model_state, char *scorer_file_path);
+
+    // Disable decoding using external scorer. Returns zero on success, non-zero on failure.
+    EXPORTED int disable_external_scorer(void *model_state);
+
+    // Set hyperparameters alpha and beta of the external scorer. Returns zero on success, non-zero on failure.
+    // @param alpha: The alpha hyperparameter of the decoder. Language model weight.
+    // @param beta: The beta hyperparameter of the decoder. Word insertion weight.
+    EXPORTED int set_scorer_alpha_beta(void *model_state, float alpha, float beta);
+
+
+    // Closing bracket for extern "C"
 #ifdef __cplusplus
 }
 #endif
