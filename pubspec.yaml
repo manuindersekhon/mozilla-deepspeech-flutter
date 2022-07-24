@@ -12,19 +12,19 @@ dependencies:
   flutter:
     sdk: flutter
   ffi: ^1.1.2
+  ffigen: ^6.0.0
 
 dev_dependencies:
-  ffigen: ^4.1.2
   flutter_test:
     sdk: flutter
 
 ffigen:
   name: 'deepspech_FFI'
   description: 'Dart bindings of the Mozilla Deepspeech library'
-  output: 'lib/deepspeech_flutter.dart'
+  output: 'deepspeech_flutter/lib/deepspeech_flutter.dart'
   headers:
   entry-points:
-  - 'native/headers/deepspeech.h'
+  - 'deepspeech_flutter/native/headers/deepspeech.h'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
